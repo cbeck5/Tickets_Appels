@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Consumption;
+use App\Models\Trace;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -72,7 +73,7 @@ class ConsumptionStatementImport implements ToModel, WithStartRow, WithChunkRead
     */
     public function model(array $row)
     {
-        if($row[2] != "" && $row[3] != "" && $row[4] != "" && $row[7] != "")
+        if($row[2] != "" && $row[3] != "" && $row[4] != "" && $row[7] != "" && is_int($row[2]))
         {
             if(DateTime::createFromFormat('H:i:s', $row[4]) && $row[4] >= "00:00:00" &&  $row[4] <= "23:59:59")
             {
@@ -87,7 +88,22 @@ class ConsumptionStatementImport implements ToModel, WithStartRow, WithChunkRead
                         'type_consumption' => $row[7],
                     ]);
                 }
+                else
+                {
+                    $data = ['message' => $row[2] . ';' . $row[3] . ';' . $row[4] . ';' . $row[5] . ';' . $row[6] . ';' . $row[7]  , 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')];
+                }
+            }
+            else
+            {
+                $data = ['message' => $row[2] . ';' . $row[3] . ';' . $row[4] . ';' . $row[5] . ';' . $row[6] . ';' . $row[7] , 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')];
             }
         }
+        else
+        {
+            $data = ['message' => $row[2] . ';' . $row[3] . ';' . $row[4] . ';' . $row[5] . ';' . $row[6] . ';' . $row[7] , 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')];
+        }
+
+        //Insert error in table Trace
+        Trace::insert($data);
     }
 }

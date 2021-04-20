@@ -33,6 +33,22 @@
 				</div>
 			</form>
 		</div>
+
+		<div>
+			@if(($nbValue) > 0)
+				<p>Durée totale réelle des appels effectués après le 15/02/2012 : {{ $dayHourSecond }} ({{ number_format($sumComm->sumComm, 0, ',', ' ') }} secondes)</p>
+				<p>TOP 10 des volumes data facturés en dehors de la tranche horaire 8h00-18h00, par abonné : </p>
+				@forelse ($topData as $key => $value)
+					<li>N°{{ $key + 1 }} -- {{ $value->abonne_id }} : {{ number_format($value->topData, 2, ',', ' ') }} Mo </li>
+				@empty
+				    <p>-</p>
+				@endforelse
+
+				<p style="margin-top: 10px;">Nombre de SMS envoyés : {{ number_format($sumSMS, 0,',', ' ') }}</p>
+			@endif
+
+		</div>
 	</div>
+
 
 @endsection  
